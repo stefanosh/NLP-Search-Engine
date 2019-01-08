@@ -19,3 +19,7 @@ class TextsSpider(scrapy.Spider):
                 'text-title': text.css('h2.home-title::text').extract_first(),
                 'text-url': text.css('a.story-link::attr(href)').extract_first()
             }
+        
+        next_page = response.css('a.blog-pager-older-link-mobile::attr("href")').extract_first()
+        if next_page is not None:
+            yield response.follow(next_page, self.parse)
