@@ -1,5 +1,5 @@
 import scrapy
-
+from bs4 import BeautifulSoup
 
 class TextsSpider(scrapy.Spider):
     name = "texts"
@@ -20,12 +20,17 @@ class TextsSpider(scrapy.Spider):
             'a.blog-pager-older-link-mobile::attr("href")').extract_first()
         if next_page is not None:
             yield response.follow(next_page, self.parse)
-    # Gets the title, url and content for each article
-    # to-do: remove all html and parse only the clean text of the articles
+
+    # Gets the title, url and content without html tags and newline characters for each article
+    # to-do: remove all javascript code such as "adsbygoogle = window.adsbygoogle || []).push({})"
+    #        found in every article
     def parse_text_data(self, response):
-        for text in response.css('div.main-box'):
+        for text in response.css('div.main-box'):          
+            content = text.css('div.articlebody').extract_first()
+            soup = BeautifulSoup(content, 'html.parser')
+            just_text = soup.get_text().replace("\n", "") 
             yield {
                 'text-title': text.css('a::text').extract_first(),
                 'text-url': text.css('a::attr(href)').extract_first(),
-                'text-content': text.css('div.articlebody').extract()
+                'text-content': just_text
             }
