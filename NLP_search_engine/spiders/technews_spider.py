@@ -45,8 +45,8 @@ class TechnewsSpider(scrapy.Spider):
             just_text = lxml.html.tostring(
                 root, method="text", encoding="unicode")
 
-            #remove newline chars
-            just_text = just_text.replace("\n", " ").replace('\"', " ").replace("\t", " ")
+            #remove some special chars
+            just_text = just_text.replace("\n", " ").replace('\"', " ").replace("\t", " ").replace("\r", " ")
                      
             yield {
                 'text-title': text.css('h1.title::text').extract_first(),
