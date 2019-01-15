@@ -1,6 +1,9 @@
 import scrapy
-from bs4 import BeautifulSoup
+import lxml.etree
+import lxml.html
 
+#to-do: Limit crawler to only 500 texts
+#to-do: Support crawling of second site (www.technewsworld.com) also 
 class TextsSpider(scrapy.Spider):
     name = "texts"
     start_urls = [
@@ -22,13 +25,24 @@ class TextsSpider(scrapy.Spider):
             yield response.follow(next_page, self.parse)
 
     # Gets the title, url and content without html tags and newline characters for each article
-    # to-do: remove all javascript code such as "adsbygoogle = window.adsbygoogle || []).push({})"
-    #        found in every article
+    # Refactored and used lxml to remove all html etc as in answer of paul trmbrth here: https://stackoverflow.com/questions/17721782/is-it-possible-that-scrapy-to-get-plain-text-from-raw-html-data-directly-instead
     def parse_text_data(self, response):
-        for text in response.css('div.main-box'):          
+        for text in response.css('div.main-box'):
             content = text.css('div.articlebody').extract_first()
-            soup = BeautifulSoup(content, 'html.parser')
-            just_text = soup.get_text().replace("\n", "") 
+            root = lxml.html.fromstring(content)
+
+            # remove tags that are not usually rendered in browsers
+            # javascript, HTML/HEAD, comments, add the tag names you dont want at the end
+            lxml.etree.strip_elements(
+                root, lxml.etree.Comment, "script", "head")
+            
+            #convert html to string
+            just_text = lxml.html.tostring(
+                root, method="text", encoding="unicode")
+
+            #remove newline chars
+            just_text = just_text.replace("\n", "")
+
             yield {
                 'text-title': text.css('a::text').extract_first(),
                 'text-url': text.css('a::attr(href)').extract_first(),
