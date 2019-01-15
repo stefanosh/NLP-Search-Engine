@@ -41,7 +41,7 @@ class TextsSpider(scrapy.Spider):
                 root, method="text", encoding="unicode")
 
             #remove newline chars
-            just_text = just_text.replace("\n", "")
+            just_text = just_text.replace("\n", " ").replace('\"', " ").replace("\t", " ")
 
             yield {
                 'text-title': text.css('a::text').extract_first(),
