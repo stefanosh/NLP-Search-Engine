@@ -52,7 +52,6 @@ class HackernewsSpider(scrapy.Spider):
 
             title = text.css('a::text').extract_first()
             url = text.css('a::attr(href)').extract_first()
-            print(Path(__file__).parent.parent)
             conn = sqlite3.connect(
                 str(Path(__file__).parent.parent) + '/database/crawler_db.sqlite', timeout=10)
             cursor = conn.cursor()
