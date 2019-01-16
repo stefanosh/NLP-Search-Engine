@@ -1,6 +1,9 @@
 import scrapy
 import lxml.etree
 import lxml.html
+import sqlite3
+from pathlib import Path
+
 
 class HackernewsSpider(scrapy.Spider):
     name = "hackernews"
@@ -47,8 +50,13 @@ class HackernewsSpider(scrapy.Spider):
             just_text = just_text.replace("\n", " ").replace(
                 '\"', " ").replace("\t", " ").replace("\r", " ")
 
-            yield {
-                'text-title': text.css('a::text').extract_first(),
-                'text-url': text.css('a::attr(href)').extract_first(),
-                'text-content': just_text
-            }
+            title = text.css('a::text').extract_first()
+            url = text.css('a::attr(href)').extract_first()
+            conn = sqlite3.connect(
+                str(Path(__file__).parent.parent) + '/database/crawler_db.sqlite', timeout=10)
+            cursor = conn.cursor()
+            cursor.execute('''INSERT INTO ARTICLES (title,url,text)
+                          VALUES (?,?,?)''',
+                           (title, url, just_text))
+            conn.commit()
+            conn.close()
