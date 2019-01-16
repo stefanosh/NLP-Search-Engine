@@ -30,8 +30,6 @@ class TechnewsSpider(scrapy.Spider):
             if(self.requests_done < self.max_requests):
                 yield response.follow(next_page, self.parse)
     # Gets the title, url and content without html tags and newline characters for each article
-    # to-do: do not include content about author
-    #        Specifically, ignore <p id="story-authorbio">
 
     def parse_text_data(self, response):
         for text in response.css('#story'):          

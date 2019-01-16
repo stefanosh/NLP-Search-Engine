@@ -2,10 +2,6 @@ import scrapy
 import lxml.etree
 import lxml.html
 
-# to-do: Limit crawler to only 500 texts
-# to-do: Support crawling of second site (www.technewsworld.com) also
-
-
 class HackernewsSpider(scrapy.Spider):
     name = "hackernews"
     start_urls = [
