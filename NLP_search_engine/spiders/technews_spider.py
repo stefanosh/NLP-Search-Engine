@@ -8,12 +8,11 @@ class TechnewsSpider(scrapy.Spider):
     start_urls = [
         'https://www.technewsworld.com/'
     ]
-    max_requests = 50
+    max_requests = 500
     requests_done = 0
 
     # Executed for every url specified in url - just example to begin with
     def parse(self, response):
-        self.requests_done += 1
         domain = "https://www.technewsworld.com"
 
         # "click" every article and run parse_text_data function
@@ -23,7 +22,7 @@ class TechnewsSpider(scrapy.Spider):
                 text_content = domain + text_content
                 if(self.requests_done <= self.max_requests):
                     yield response.follow(text_content, self.parse_text_data)
-
+                    self.requests_done += 1
         # get next page's articles and rerun parse for each of them
         next_page = response.css(
             '#earlier a::attr("href")').extract_first()
@@ -31,13 +30,11 @@ class TechnewsSpider(scrapy.Spider):
             next_page = domain + next_page
             if(self.requests_done <= self.max_requests):
                 yield response.follow(next_page, self.parse)
-
     # Gets the title, url and content without html tags and newline characters for each article
     # to-do: do not include content about author
     #        Specifically, ignore <p id="story-authorbio">
 
     def parse_text_data(self, response):
-        self.requests_done += 1
         for text in response.css('#story'):
             content = text.css('#story-body').extract_first()
             root = lxml.html.fromstring(content)

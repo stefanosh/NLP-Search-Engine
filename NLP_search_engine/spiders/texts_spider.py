@@ -11,20 +11,20 @@ class TextsSpider(scrapy.Spider):
     start_urls = [
         'https://thehackernews.com/'
     ]
-    max_requests = 50
+    max_requests = 500
     requests_done = 0
 
     # Executed for every url specified in url - just example to begin with
     def parse(self, response):
-        self.requests_done += 1
+
         # "click" every article and run parse_text_data function
         for text in response.css('div.body-post'):
             text_content = text.css(
                 'a.story-link::attr("href")').extract_first()
             if text_content is not None:
-
                 if(self.requests_done <= self.max_requests):
                     yield response.follow(text_content, self.parse_text_data)
+                    self.requests_done += 1
         # get next page's articles and rerun parse for each of them
         next_page = response.css(
             'a.blog-pager-older-link-mobile::attr("href")').extract_first()
@@ -35,7 +35,7 @@ class TextsSpider(scrapy.Spider):
     # Gets the title, url and content without html tags and newline characters for each article
     # Refactored and used lxml to remove all html etc as in answer of paul trmbrth here: https://stackoverflow.com/questions/17721782/is-it-possible-that-scrapy-to-get-plain-text-from-raw-html-data-directly-instead
     def parse_text_data(self, response):
-        self.requests_done += 1
+
         for text in response.css('div.main-box'):
             content = text.css('div.articlebody').extract_first()
             root = lxml.html.fromstring(content)
