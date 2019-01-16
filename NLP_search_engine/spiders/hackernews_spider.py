@@ -4,8 +4,8 @@ import lxml.html
 
 #to-do: Limit crawler to only 500 texts
 #to-do: Support crawling of second site (www.technewsworld.com) also 
-class TextsSpider(scrapy.Spider):
-    name = "texts"
+class HackernewsSpider(scrapy.Spider):
+    name = "hackernews"
     start_urls = [
         'https://thehackernews.com/'
     ]
