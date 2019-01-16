@@ -4,6 +4,7 @@ import sqlite3
 conn = sqlite3.connect('crawler_db.sqlite')
 
 cursor = conn.cursor()
+cursor.execute('''DROP TABLE IF EXISTS ARTICLES''')
 cursor.execute('''CREATE TABLE ARTICLES (
                                 id INTEGER PRIMARY KEY,
                                 title TEXT NOT NULL ,

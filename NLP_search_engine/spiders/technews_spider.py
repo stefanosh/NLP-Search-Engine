@@ -1,5 +1,7 @@
 import scrapy
 from bs4 import BeautifulSoup
+import sqlite3
+
 
 
 class TechnewsSpider(scrapy.Spider):
@@ -47,8 +49,13 @@ class TechnewsSpider(scrapy.Spider):
             #remove newline, quotes and tab chars  
             just_text = soup.get_text().replace("\n", " ").replace('\"', " ").replace("\t", " ").replace("\r", " ")
                      
-            yield {
-                'text-title': text.css('h1.title::text').extract_first(),
-                'text-url': response.request.url,
-                'text-content': just_text
-            }
+            title = text.css('h1.title::text').extract_first()
+                 
+            conn = sqlite3.connect('../database/crawler_db.sqlite',timeout=10)
+            cursor = conn.cursor() 
+            cursor.execute('''INSERT INTO ARTICLES (title,url,text) 
+                          VALUES (?,?,?)''',
+                          (title,response.request.url,just_text))
+            conn.commit()  
+            conn.close()
+            
