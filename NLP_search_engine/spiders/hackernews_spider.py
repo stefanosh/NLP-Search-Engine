@@ -2,13 +2,17 @@ import scrapy
 import lxml.etree
 import lxml.html
 
-#to-do: Limit crawler to only 500 texts
-#to-do: Support crawling of second site (www.technewsworld.com) also 
+# to-do: Limit crawler to only 500 texts
+# to-do: Support crawling of second site (www.technewsworld.com) also
+
+
 class HackernewsSpider(scrapy.Spider):
     name = "hackernews"
     start_urls = [
         'https://thehackernews.com/'
     ]
+    maxRequests = 500
+    requestsDone = 0
 
     # Executed for every url specified in url - just example to begin with
     def parse(self, response):
@@ -17,12 +21,15 @@ class HackernewsSpider(scrapy.Spider):
             text_content = text.css(
                 'a.story-link::attr("href")').extract_first()
             if text_content is not None:
-                yield response.follow(text_content, self.parse_text_data)
+                if self.requestsDone < self.maxRequests:
+                    yield response.follow(text_content, self.parse_text_data)
+                    self.requestsDone += 1
         # get next page's articles and rerun parse for each of them
         next_page = response.css(
             'a.blog-pager-older-link-mobile::attr("href")').extract_first()
         if next_page is not None:
-            yield response.follow(next_page, self.parse)
+            if self.requestsDone <= self.maxRequests:
+                yield response.follow(next_page, self.parse)
 
     # Gets the title, url and content without html tags and newline characters for each article
     # Refactored and used lxml to remove all html etc as in answer of paul trmbrth here: https://stackoverflow.com/questions/17721782/is-it-possible-that-scrapy-to-get-plain-text-from-raw-html-data-directly-instead
@@ -35,13 +42,14 @@ class HackernewsSpider(scrapy.Spider):
             # javascript, HTML/HEAD, comments, add the tag names you dont want at the end
             lxml.etree.strip_elements(
                 root, lxml.etree.Comment, "script", "head")
-            
-            #convert html to string
+
+            # convert html to string
             just_text = lxml.html.tostring(
                 root, method="text", encoding="unicode")
 
-            #remove some special chars
-            just_text = just_text.replace("\n", " ").replace('\"', " ").replace("\t", " ").replace("\r", " ")
+            # remove some special chars
+            just_text = just_text.replace("\n", " ").replace(
+                '\"', " ").replace("\t", " ").replace("\r", " ")
 
             yield {
                 'text-title': text.css('a::text').extract_first(),
