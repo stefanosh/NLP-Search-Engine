@@ -20,3 +20,5 @@ htmlcov/
 
 # Windows
 Thumbs.db
+NLP_search_engine/spiders/hackernews.json
+NLP_search_engine/spiders/technews.json
