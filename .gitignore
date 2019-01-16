@@ -22,3 +22,4 @@ htmlcov/
 Thumbs.db
 NLP_search_engine/spiders/hackernews.json
 NLP_search_engine/spiders/technews.json
+NLP_search_engine/database/crawler_db.sqlite
