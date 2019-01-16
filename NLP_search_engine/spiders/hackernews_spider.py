@@ -28,7 +28,7 @@ class HackernewsSpider(scrapy.Spider):
         next_page = response.css(
             'a.blog-pager-older-link-mobile::attr("href")').extract_first()
         if next_page is not None:
-            if self.requestsDone <= self.maxRequests:
+            if self.requestsDone < self.maxRequests:
                 yield response.follow(next_page, self.parse)
 
     # Gets the title, url and content without html tags and newline characters for each article

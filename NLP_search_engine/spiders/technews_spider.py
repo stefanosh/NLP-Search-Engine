@@ -19,7 +19,7 @@ class TechnewsSpider(scrapy.Spider):
             text_content = text.css('a::attr("href")').extract_first()
             if text_content is not None:
                 text_content = domain + text_content
-                if(self.requests_done <= self.max_requests):
+                if(self.requests_done < self.max_requests):
                     yield response.follow(text_content, self.parse_text_data)
                     self.requests_done += 1
         # get next page's articles and rerun parse for each of them
@@ -27,7 +27,7 @@ class TechnewsSpider(scrapy.Spider):
             '#earlier a::attr("href")').extract_first()
         if next_page is not None:
             next_page = domain + next_page
-            if(self.requests_done <= self.max_requests):
+            if(self.requests_done < self.max_requests):
                 yield response.follow(next_page, self.parse)
     # Gets the title, url and content without html tags and newline characters for each article
     # to-do: do not include content about author
