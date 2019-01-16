@@ -1,6 +1,5 @@
 import sqlite3
 import nltk
-nltk.download('all')
 
 conn = sqlite3.connect('database/crawler_db.sqlite')
 
@@ -10,12 +9,10 @@ cur.execute("SELECT text FROM ARTICLES")
 rows = cur.fetchall()
  
 # Syntactic analysis and indexing from here and after..
-""" for t in rows:
-    #print(t[0])
+for t in rows:
     text = t[0].lower()
-    tokens = nltk.word_tokenize(text)  """
-    
-
+    tokens = nltk.word_tokenize(text) 
+    tags = nltk.pos_tag(text)
 
 
 # Save (commit) the changes
