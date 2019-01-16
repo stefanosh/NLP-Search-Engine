@@ -2,10 +2,11 @@
 
 Make sure scrapy and dependencies are installed like it is mentioned on <a href="https://doc.scrapy.org/en/latest/intro/install.html">docs</a>
 
-Dependencies install:
+Additional Dependencies Install:
 
 ```
 pip install BeautifulSoup4
+pip install pathlib
 ```
 
 Create DB and 'ARTICLES' table

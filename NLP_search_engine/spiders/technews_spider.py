@@ -1,7 +1,7 @@
 import scrapy
 from bs4 import BeautifulSoup
 import sqlite3
-
+from pathlib import Path
 
 
 class TechnewsSpider(scrapy.Spider):
@@ -51,7 +51,8 @@ class TechnewsSpider(scrapy.Spider):
                      
             title = text.css('h1.title::text').extract_first()
                  
-            conn = sqlite3.connect('../database/crawler_db.sqlite',timeout=10)
+            conn = sqlite3.connect(
+                str(Path(__file__).parent.parent) + '/database/crawler_db.sqlite', timeout=10)
             cursor = conn.cursor() 
             cursor.execute('''INSERT INTO ARTICLES (title,url,text) 
                           VALUES (?,?,?)''',
