@@ -7,6 +7,7 @@ Additional Dependencies Install:
 ```
 pip install BeautifulSoup4
 pip install pathlib
+pip install nltk 
 ```
 
 Create DB and 'ARTICLES' table
