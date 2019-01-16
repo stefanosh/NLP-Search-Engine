@@ -1,6 +1,5 @@
 import scrapy
-import lxml.etree
-import lxml.html
+from bs4 import BeautifulSoup
 
 
 class TechnewsSpider(scrapy.Spider):
@@ -35,23 +34,21 @@ class TechnewsSpider(scrapy.Spider):
     #        Specifically, ignore <p id="story-authorbio">
 
     def parse_text_data(self, response):
-        for text in response.css('#story'):
-            content = text.css('#story-body').extract_first()
-            root = lxml.html.fromstring(content)
-
-            # remove tags that are not usually rendered in browsers
-            # javascript, HTML/HEAD, comments, add the tag names you dont want at the end
-            lxml.etree.strip_elements(
-                root, lxml.etree.Comment, "script", "head")
-
-            # convert html to string
-            just_text = lxml.html.tostring(
-                root, method="text", encoding="unicode")
-
-            # remove some special chars
-            just_text = just_text.replace("\n", " ").replace(
-                '\"', " ").replace("\t", " ").replace("\r", " ")
-
+        for text in response.css('#story'):          
+            
+            # Getting all content(paragraphs) of the article excluding the article 
+            # containing the bio of author as it is useless for indexing
+            content_list = text.xpath("//div[@id ='story-body']/descendant::text()[not(ancestor::p/@id='story-authorbio')]").extract()
+            content_text = ''
+            
+            # Concatenating each paragraph(<p>) to the final article text
+            for p in content_list:  # extracts all <p> inside content list
+                content_text = content_text + p      
+            soup = BeautifulSoup(content_text, 'html.parser')
+            
+            #remove newline, quotes and tab chars  
+            just_text = soup.get_text().replace("\n", " ").replace('\"', " ").replace("\t", " ").replace("\r", " ")
+                     
             yield {
                 'text-title': text.css('h1.title::text').extract_first(),
                 'text-url': response.request.url,
