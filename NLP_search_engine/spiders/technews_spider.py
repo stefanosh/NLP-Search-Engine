@@ -2,6 +2,7 @@ import scrapy
 from bs4 import BeautifulSoup
 import sqlite3
 from pathlib import Path
+import re
 
 
 class TechnewsSpider(scrapy.Spider):
@@ -46,8 +47,16 @@ class TechnewsSpider(scrapy.Spider):
                 content_text = content_text + p      
             soup = BeautifulSoup(content_text, 'html.parser')
             
-            #remove newline, quotes and tab chars  
-            just_text = soup.get_text().replace("\n", " ").replace('\"', " ").replace("\t", " ").replace("\r", " ")
+             # remove some special chars
+            just_text = soup.get_text().replace("\n", " ").replace( '\"', " ").replace("\t", " ")
+            just_text = just_text.replace("\r", " ").replace("*", " ").replace("=", " ")
+            just_text = just_text.replace("@", " ").replace("%", " ").replace("^", " ")
+            just_text = just_text.replace("&", " ").replace("/", " ").replace("?", " ")
+            just_text = just_text.replace(";", " ").replace(":", " ")
+
+            #Remove punctuation but leave untouched decimals  e.g "3.1"
+            regex = r"(?<!\d)[.,](?!\d)"
+            just_text = re.sub(regex, "", just_text, 0)
                      
             title = text.css('h1.title::text').extract_first()
                  

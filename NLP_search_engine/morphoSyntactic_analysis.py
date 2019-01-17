@@ -22,7 +22,7 @@ data["articles"] = []
 article_id = 0
 
 # For every article in database perform the following operations
-for row in rows:
+for row in rows:   
     text = row[0].lower()
     tokens = nltk.word_tokenize(text) 
     tags = nltk.pos_tag(tokens)
@@ -39,7 +39,7 @@ for row in rows:
 
     data["articles"].append(tmp)
 
-with open('texts_pos_tagged_all.json', 'w') as outfile:  
+with open('texts_pos_tagged.json', 'w') as outfile:  
     json.dump(data, outfile) 
  
 

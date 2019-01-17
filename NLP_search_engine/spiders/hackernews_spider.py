@@ -3,6 +3,7 @@ import lxml.etree
 import lxml.html
 import sqlite3
 from pathlib import Path
+import re
 
 
 class HackernewsSpider(scrapy.Spider):
@@ -47,8 +48,16 @@ class HackernewsSpider(scrapy.Spider):
                 root, method="text", encoding="unicode")
 
             # remove some special chars
-            just_text = just_text.replace("\n", " ").replace(
-                '\"', " ").replace("\t", " ").replace("\r", " ")
+            just_text = just_text.replace("\n", " ").replace( '\"', " ").replace("\t", " ")
+            just_text = just_text.replace("\r", " ").replace("*", " ").replace("=", " ")
+            just_text = just_text.replace("@", " ").replace("%", " ").replace("^", " ")
+            just_text = just_text.replace("&", " ").replace("/", " ").replace("?", " ")
+            just_text = just_text.replace(";", " ").replace(":", " ")
+
+            #Remove punctuation but leave untouched decimals  e.g "3.1"
+            regex = r"(?<!\d)[.,](?!\d)"
+            just_text = re.sub(regex, "", just_text, 0)
+
 
             title = text.css('a::text').extract_first()
             url = text.css('a::attr(href)').extract_first()
