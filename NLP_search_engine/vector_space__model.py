@@ -1,7 +1,9 @@
 import json
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet
 import numpy as np
 from pprint import pprint
+
 # calculates TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document)
 # article is in json format, containing all the lemmas
 
@@ -23,12 +25,13 @@ def idf_of(word, data):
     number_of_docs_containing_word = 0
     for article in data["articles"]:
         for text_id in article:
+            total_number_of_docs += 1
             # for every word in every article
             for lemma in article[str(text_id)]:
                 if(lemma["word"] == word):
                     number_of_docs_containing_word += 1
                     break
-        total_number_of_docs += 1
+        
     return np.log(total_number_of_docs / float(number_of_docs_containing_word))
 
 # hold only unique words in every article - remove duplicates
@@ -77,11 +80,26 @@ def removeStopWords(data):
     return dataToReturn
 
 
-with open('withpos.json') as f:
+def get_wordnet_pos(tag):
+    if  tag.startswith('J'):
+        return wordnet.ADJ
+    elif tag.startswith('V'):
+        return wordnet.VERB
+    elif tag.startswith('N'):
+        return wordnet.NOUN
+    elif tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return wordnet.ADV
+
+
+with open('texts_pos_tagged.json') as f:
     data = json.load(f)
 
+print('Remove stopwords')
 data = removeStopWords(data)
 
+print('Lemmatization')
 # Lemmatisation of words
 lemmatizer = WordNetLemmatizer()
 for article in data["articles"]:
@@ -89,8 +107,9 @@ for article in data["articles"]:
             # for every word in every article
         for word in article[str(text_id)]:
             word["word"] = lemmatizer.lemmatize(
-                word["word"], pos=word["pos_tag"].lower())
+                word["word"], get_wordnet_pos(word["pos_tag"]))
 
+print('Calculating tf ')
 # calculate tf for every lemma and add it to json object
 for article in data["articles"]:
     for text_id in article:
@@ -101,6 +120,7 @@ for article in data["articles"]:
 #since we don't need duplicate words in each article anymore, we can remove them
 data = removeDuplicateWordsFromEachArticle(data)
 
+print('Calculating tf idf')
 # calculate idf (and tf*idf in the same time) for every lemma and add it to json object
 for article in data["articles"]:
     for text_id in article:
@@ -110,3 +130,7 @@ for article in data["articles"]:
             word["tf_idf"] = word["idf"] * word["tf"]
 
 pprint(data)
+
+""" with open('vector_space.json', 'w') as outfile:  
+    json.dump(data, outfile) 
+ """

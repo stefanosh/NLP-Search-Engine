@@ -23,3 +23,7 @@ Thumbs.db
 NLP_search_engine/spiders/hackernews.json
 NLP_search_engine/spiders/technews.json
 NLP_search_engine/database/crawler_db.sqlite
+NLP_search_engine/pos_tags.json
+NLP_search_engine/texts_pos_tagged_all.json
+NLP_search_engine/texts_pos_tagged.json
+NLP_search_engine/vector_space.json
