@@ -1,6 +1,7 @@
 import json
 from nltk.stem import WordNetLemmatizer
 import numpy as np
+from pprint import pprint
 # calculates TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document)
 # article is in json format, containing all the lemmas
 
@@ -30,6 +31,25 @@ def idf_of(word, data):
         total_number_of_docs += 1
     return np.log(total_number_of_docs / float(number_of_docs_containing_word))
 
+# hold only unique words in every article - remove duplicates
+
+
+def removeDuplicateWordsFromEachArticle(data):
+    dataToReturn = {"articles": []}
+    for article in data["articles"]:
+        for text_id in article:
+            shown_list = []
+            for word in article[str(text_id)]:
+                if word not in shown_list:
+                    for i in dataToReturn["articles"]:
+                        if(str(text_id) in i):
+                            dataToReturn["articles"][dataToReturn["articles"].index(
+                                i)][str(text_id)].append(word)
+                            break
+                    else:
+                        dataToReturn["articles"].append({str(text_id): [word]})
+                    shown_list.append(word)
+    return dataToReturn
 
 # for every article it removes the stopwords, by creating a new array which holds all the values of
 
@@ -78,11 +98,15 @@ for article in data["articles"]:
         for word in article[str(text_id)]:
             word["tf"] = tf_of(word["word"], article[str(text_id)])
 
-# calculate idf for every lemma and add it to json object
+#since we don't need duplicate words in each article anymore, we can remove them
+data = removeDuplicateWordsFromEachArticle(data)
+
+# calculate idf (and tf*idf in the same time) for every lemma and add it to json object
 for article in data["articles"]:
     for text_id in article:
             # for every word in every article
         for word in article[str(text_id)]:
             word["idf"] = idf_of(word["word"], data)
             word["tf_idf"] = word["idf"] * word["tf"]
-print(data)
+
+pprint(data)
