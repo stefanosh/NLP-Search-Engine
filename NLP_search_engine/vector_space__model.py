@@ -1,9 +1,8 @@
 import json
-from pprint import pprint
+from nltk.stem import WordNetLemmatizer
+
 
 # for every article it removes the stopwords, by creating a new array which holds all the values of
-
-
 def removeStopWords(data):
     closedClassCategoriesTuple = ("CD", "CC", "DT", "EX", "IN", "LS", "MD", "PDT",
                                   "POS", "PRP",  "PRP",  "RP",   "TO", "UH", "WDT", "WP", "WP", "WRB")
@@ -31,4 +30,14 @@ with open('withpos.json') as f:
     data = json.load(f)
 
 data = removeStopWords(data)
-pprint(data)
+
+# Lemmatisation of words
+lemmatizer = WordNetLemmatizer()
+for article in data["articles"]:
+    for text_id in article:
+            # for every word in every article
+        for word in article[str(text_id)]:
+            word["word"] = lemmatizer.lemmatize(
+                word["word"], pos=word["pos_tag"].lower())
+
+

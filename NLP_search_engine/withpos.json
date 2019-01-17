@@ -3,7 +3,7 @@
         {
             "12": [
                 {
-                    "word": "word1_in_article_12",
+                    "word": "better",
                     "pos_tag": "N"
                 }
             ]
@@ -11,15 +11,15 @@
         {
             "1": [
                 {
-                    "word": "word2_in_article1",
+                    "word": "starting",
                     "pos_tag": "V"
                 },
                 {
-                    "word": "word2_in_article1",
+                    "word": "starting",
                     "pos_tag": "V"
                 },
                 {
-                    "word": "word3_in_article1",
+                    "word": "ads",
                     "pos_tag": "LS"
                 }
             ]
@@ -27,7 +27,7 @@
         {
             "13": [
                 {
-                    "word": "word2_in_article1",
+                    "word": "coming",
                     "pos_tag": "V"
                 }
             ]
