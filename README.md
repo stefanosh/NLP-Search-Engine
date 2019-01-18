@@ -23,11 +23,14 @@ Then, run:<br/>
 scrapy crawl hackernews
 scrapy crawl technews
 ```
-Check terminal for output to see if everything is set up correctly <br/>
+
+Then, add postags to each word in article :<br/>
+```
+python morphoSyntactic_analysis.py
+```
 
 After Postagger step is done and file is correctly generated with words and postags, run :<br/>
 ```
 python vector_space__model.py
 ```
 and check console for the output.
-*NOTE* For testing purposes, i have uploaded file withpos.json which is the file that vector_space__model.py loads and makes the calculations.
