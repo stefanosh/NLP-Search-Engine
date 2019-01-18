@@ -13,7 +13,7 @@ import json
 conn = sqlite3.connect('database/crawler_db.sqlite')
 
 cur = conn.cursor()
-cur.execute("SELECT text FROM ARTICLES")
+cur.execute("SELECT text FROM ARTICLES LIMIT 200")
 
 rows = cur.fetchall()
 data = {}
@@ -39,7 +39,7 @@ for row in rows:
 
     data["articles"].append(tmp)
 
-with open('texts_pos_tagged.json', 'w') as outfile:  
+with open('texts_pos_tagged_200.json', 'w') as outfile:  
     json.dump(data, outfile) 
  
 
