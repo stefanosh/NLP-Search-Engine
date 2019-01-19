@@ -4,6 +4,8 @@ from nltk.corpus import wordnet
 import numpy as np
 from pprint import pprint
 from pathlib import Path
+import xml.etree.cElementTree as element_tree
+from xml.dom import minidom
 
 # calculates TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document)
 # article is in json format, containing all the lemmas
@@ -161,9 +163,24 @@ for x in allwords_set:
     progress_per_cent = (float(iteration) / float(all_unique_words_count))*100
     print("Calculating idf progess: {:0.1f}%.\n".format(progress_per_cent))
 
+# with open(str(Path(__file__).parent) + '/inverted_index.json', 'w') as outfile:
+#     json.dump(xml_dict, outfile)
 
-# print of data - as we can see each word contains all information needed to be written on xml file immediately, without other loop
-pprint(xml_dict)
+#creation of inverted_index xml file
+print("Writing to inverted_index.xml...")
 
-with open(str(Path(__file__).parent) + '/inverted_index.json', 'w') as outfile:
-    json.dump(xml_dict, outfile)
+root = element_tree.Element("inverted_index")
+
+for lemma in xml_dict:
+    xml_lemma = element_tree.SubElement(root, "lemma", name=lemma)
+    for article in xml_dict[lemma]:
+        for article_single in article:
+            element_tree.SubElement(
+                xml_lemma, "document", id=article_single, weight=str(article[article_single]))
+
+tree = element_tree.ElementTree(root)
+
+xmlstr = minidom.parseString(
+    element_tree.tostring(root)).toprettyxml(indent="   ")
+with open(str(Path(__file__).parent) + '/inverted_index.xml', "w") as outputfile:
+    outputfile.write(xmlstr)

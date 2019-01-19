@@ -13,7 +13,7 @@ pip install numpy
 
 Create DB and 'ARTICLES' table
 ```
-cd NLP_Search_Engine
+cd NLP_search_engine
 cd database
 python create_DB.py
 ```
@@ -29,15 +29,12 @@ Then, add postags to each word in article :<br/>
 python morphoSyntactic_analysis.py
 ```
 
-After Postagger step is done and file is correctly generated with words and postags, run :<br/>
+After Postagger step is done, in order to add lemmatisation, calculations of tf_idf etc, and write to inverted_index.xml file, run :<br/>
 ```
 python vector_space_model.py
 ```
 
-To created inverted file in xml format run: :<br/>
-
+Do everything in one command:
 ```
-python indexing.py
+cd NLP_search_engine/ && python ./database/create_DB.py && scrapy crawl hackernews && scrapy crawl technews && python morphoSyntactic_analysis.py && python vector_space_model.py
 ```
-
-and check console for the output.

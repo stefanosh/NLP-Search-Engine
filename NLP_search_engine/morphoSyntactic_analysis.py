@@ -11,7 +11,7 @@ from pathlib import Path
 # This script performs the morphosyntactic analysis of articles
 # Tokenization, pos tagging of every word in each article and creation of json file with this pos tagged data, to be used in vector_space_model.py
 
-
+print("Adding pos tags...")
 conn = sqlite3.connect(str(Path(__file__).parent) +
                        '/database/crawler_db.sqlite')
 
