@@ -3,6 +3,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 import numpy as np
 from pprint import pprint
+from pathlib import Path
 
 # calculates TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document)
 # article is in json format, containing all the lemmas
@@ -16,8 +17,9 @@ def tf_of(word, article):
     return(times_t_in_article / float(len(article)))
 
 # calculates IDF(t) = log_e(Total number of documents / Number of documents with term t in it)
-# **NOTE** changed here the return status, so that it also returns in which articles the word exists, 
+# **NOTE** changed here the return status, so that it also returns in which articles the word exists,
 # so that we avoid this extra looops on later stage
+
 
 def idf_of(word):
     number_of_docs_containing_word = 0
@@ -34,6 +36,7 @@ def idf_of(word):
     return {"idf": np.log(articles_count / float(number_of_docs_containing_word)), "texts_ids": ids_list}
 
 # hold only unique words in every article - remove duplicates
+
 
 def removeDuplicateWordsFromEachArticle(data):
     dataToReturn = {"articles": []}
@@ -53,6 +56,7 @@ def removeDuplicateWordsFromEachArticle(data):
     return dataToReturn
 
 # for every article it removes the stopwords, by creating a new array which holds all the values of
+
 
 def removeStopWords(data):
     closedClassCategoriesTuple = ("CD", "CC", "DT", "EX", "IN", "LS", "MD", "PDT",
@@ -79,11 +83,13 @@ def removeStopWords(data):
 # Needed for calculation of tf*idf in each unique word, because in calculation of idf we calculate also the texts containing this unique word,
 #  but we don't know at that point what is its tf
 
+
 def get_tf_of_word_from_article(set_tf, word, article_id):
     key = str(article_id) + ":" + word
     return set_tf[key]
 
-#Return the correct pos_tag needed for lemmatizer, as it doesn;t accept all tags
+# Return the correct pos_tag needed for lemmatizer, as it doesn;t accept all tags
+
 
 def get_wordnet_pos(tag):
     if tag.startswith('J'):
@@ -142,24 +148,22 @@ data = removeDuplicateWordsFromEachArticle(data)
 
 print('Calculating idf of unique set')
 set_idf = {}
-xml_dict = {} # will contain every unique word, and foreach word, there will be an array containing the articles_ids it belongs and the idf per article
+xml_dict = {}  # will contain every unique word, and foreach word, there will be an array containing the articles_ids it belongs and the idf per article
 iteration = 0
 for x in allwords_set:
     xml_dict[x] = []
     set_idf[x] = idf_of(x)
     # for every article containing this unique word, here it is also calculated the final tf*idf, so after it, xml_dict will be ready to be written on xml file immediately
     for article_id in set_idf[x]["texts_ids"]:
-        xml_dict[x].append({str(article_id):set_idf[x]["idf"] * \
-            get_tf_of_word_from_article(set_tf, x, article_id)})
+        xml_dict[x].append({str(article_id): set_idf[x]["idf"] *
+                            get_tf_of_word_from_article(set_tf, x, article_id)})
     iteration += 1
     progress_per_cent = (float(iteration) / float(all_unique_words_count))*100
     print("Calculating idf progess: {:0.1f}%.\n".format(progress_per_cent))
 
 
-#print of data - as we can see each word contains all information needed to be written on xml file immediately, without other loop
+# print of data - as we can see each word contains all information needed to be written on xml file immediately, without other loop
 pprint(xml_dict)
-with open('vector_space.json', 'w') as outfile:
-    json.dump(data, outfile)
 
-with open('inverted_index.json', 'w') as outfile:
+with open(str(Path(__file__).parent) + '/inverted_index.json', 'w') as outfile:
     json.dump(xml_dict, outfile)

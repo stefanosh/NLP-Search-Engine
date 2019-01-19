@@ -11,7 +11,7 @@ class HackernewsSpider(scrapy.Spider):
     start_urls = [
         'https://thehackernews.com/'
     ]
-    maxRequests = 200
+    maxRequests = 50
     requestsDone = 0
 
     # Executed for every url specified in url - just example to begin with

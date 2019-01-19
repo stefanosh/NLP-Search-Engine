@@ -10,7 +10,7 @@ class TechnewsSpider(scrapy.Spider):
     start_urls = [
         'https://www.technewsworld.com/'
     ]
-    max_requests = 200
+    max_requests = 50
     requests_done = 0
 
     # Executed for every url specified in url - just example to begin with
