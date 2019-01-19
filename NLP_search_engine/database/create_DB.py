@@ -1,7 +1,7 @@
 import sqlite3
+from pathlib import Path
 
-
-conn = sqlite3.connect('crawler_db.sqlite')
+conn = sqlite3.connect(str(Path(__file__).parent) + '/crawler_db.sqlite')
 
 cursor = conn.cursor()
 cursor.execute('''DROP TABLE IF EXISTS ARTICLES''')
@@ -13,5 +13,5 @@ cursor.execute('''CREATE TABLE ARTICLES (
 
 
 # Save (commit) the changes
-conn.commit()  
+conn.commit()
 conn.close()

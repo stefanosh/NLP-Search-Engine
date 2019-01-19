@@ -8,19 +8,33 @@ Additional Dependencies Install:
 pip install BeautifulSoup4
 pip install pathlib
 pip install nltk 
+pip install numpy 
 ```
 
 Create DB and 'ARTICLES' table
 ```
-cd NLP_Search_Engine
+cd NLP_search_engine
 cd database
 python create_DB.py
 ```
 
-Then, run:<br/>
+Then, run to crawl the websites and store the articles in database:<br/>
 ```
 scrapy crawl hackernews
 scrapy crawl technews
 ```
-Check terminal for output to see if everything is set up correctly <br/>
 
+Then, add postags to each word in article :<br/>
+```
+python morphoSyntactic_analysis.py
+```
+
+After Postagger step is done, in order to add lemmatisation, calculations of tf_idf etc, and write to inverted_index.xml file, run :<br/>
+```
+python vector_space_model.py
+```
+
+Do everything in one command:
+```
+cd NLP_search_engine/ && python ./database/create_DB.py && scrapy crawl hackernews && scrapy crawl technews && python morphoSyntactic_analysis.py && python vector_space_model.py
+```
