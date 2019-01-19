@@ -10,7 +10,7 @@ class TechnewsSpider(scrapy.Spider):
     start_urls = [
         'https://www.technewsworld.com/'
     ]
-    max_requests = 500
+    max_requests = 200
     requests_done = 0
 
     # Executed for every url specified in url - just example to begin with
@@ -46,27 +46,10 @@ class TechnewsSpider(scrapy.Spider):
             for p in content_list:  # extracts all <p> inside content list
                 content_text = content_text + p      
             soup = BeautifulSoup(content_text, 'html.parser')
-            
-             # remove some special chars
-            just_text = soup.get_text().replace("\n", " ").replace( '\"', " ").replace("\t", " ")
-            just_text = just_text.replace("\r", " ").replace("*", " ").replace("=", " ")
-            just_text = just_text.replace("@", " ").replace("%", " ").replace("^", " ")
-            just_text = just_text.replace("&", " ").replace("/", " ").replace("?", " ")
-            just_text = just_text.replace(";", " ").replace(":", " ").replace("→", " ")
-            just_text = just_text.replace("“", " ").replace("€", " ").replace("’", " ")
-            just_text = just_text.replace("‘", " ").replace("—", " ").replace("£", " ")
-            just_text = just_text.replace("~", " ").replace("//", " ").replace("\\", " ")
-            just_text = just_text.replace("(", " ").replace(")", " ").replace("[", " ")
-            just_text = just_text.replace("]", " ").replace("{", " ").replace("}", " ")
-            just_text = just_text.replace("`", " ").replace("!", " ").replace("#", " ")
-            just_text = just_text.replace("+", " ").replace("'", " ").replace("|", " ")
-            just_text = just_text.replace("<", " ").replace(">", " ").replace('"', " ")
-            just_text = just_text.replace("¨", " ").replace("΄", " ")
 
-            #Remove punctuation but leave untouched decimals  e.g "3.1"
-            regex = r"(?<!\d)[.,](?!\d)"
-            just_text = re.sub(regex, "", just_text, 0)
-                     
+            just_text = soup.get_text().encode('ascii', 'ignore').decode('utf-8')
+            just_text = re.sub(r'[^a-zA-Z0-9]'," ", just_text)    
+           
             title = text.css('h1.title::text').extract_first()
                  
             conn = sqlite3.connect(
