@@ -52,7 +52,16 @@ class TechnewsSpider(scrapy.Spider):
             just_text = just_text.replace("\r", " ").replace("*", " ").replace("=", " ")
             just_text = just_text.replace("@", " ").replace("%", " ").replace("^", " ")
             just_text = just_text.replace("&", " ").replace("/", " ").replace("?", " ")
-            just_text = just_text.replace(";", " ").replace(":", " ")
+            just_text = just_text.replace(";", " ").replace(":", " ").replace("→", " ")
+            just_text = just_text.replace("“", " ").replace("€", " ").replace("’", " ")
+            just_text = just_text.replace("‘", " ").replace("—", " ").replace("£", " ")
+            just_text = just_text.replace("~", " ").replace("//", " ").replace("\\", " ")
+            just_text = just_text.replace("(", " ").replace(")", " ").replace("[", " ")
+            just_text = just_text.replace("]", " ").replace("{", " ").replace("}", " ")
+            just_text = just_text.replace("`", " ").replace("!", " ").replace("#", " ")
+            just_text = just_text.replace("+", " ").replace("'", " ").replace("|", " ")
+            just_text = just_text.replace("<", " ").replace(">", " ").replace('"', " ")
+            just_text = just_text.replace("¨", " ").replace("΄", " ")
 
             #Remove punctuation but leave untouched decimals  e.g "3.1"
             regex = r"(?<!\d)[.,](?!\d)"
