@@ -6,6 +6,7 @@ from pprint import pprint
 from pathlib import Path
 import xml.etree.cElementTree as element_tree
 from xml.dom import minidom
+import sys
 
 # calculates TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document)
 # article is in json format, containing all the lemmas
@@ -161,7 +162,8 @@ for x in allwords_set:
                             get_tf_of_word_from_article(set_tf, x, article_id)})
     iteration += 1
     progress_per_cent = (float(iteration) / float(all_unique_words_count))*100
-    print("Calculating idf progess: {:0.1f}%.\n".format(progress_per_cent))
+    sys.stdout.write("Calculating idf progess: %0.1f%%   \r" % (progress_per_cent) )
+    sys.stdout.flush()
 
 # with open(str(Path(__file__).parent) + '/inverted_index.json', 'w') as outfile:
 #     json.dump(xml_dict, outfile)
