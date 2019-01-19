@@ -18,7 +18,7 @@ cd database
 python create_DB.py
 ```
 
-Then, run:<br/>
+Then, run to crawl the websites and store the articles in database:<br/>
 ```
 scrapy crawl hackernews
 scrapy crawl technews
@@ -31,6 +31,13 @@ python morphoSyntactic_analysis.py
 
 After Postagger step is done and file is correctly generated with words and postags, run :<br/>
 ```
-python vector_space__model.py
+python vector_space_model.py
 ```
+
+To created inverted file in xml format run: :<br/>
+
+```
+python indexing.py
+```
+
 and check console for the output.
