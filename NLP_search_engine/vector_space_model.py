@@ -16,7 +16,8 @@ def tf_of(word, article):
     return(times_t_in_article / float(len(article)))
 
 # calculates IDF(t) = log_e(Total number of documents / Number of documents with term t in it)
-# **NOTE** changed here the return status, so that it also returns in which articles the word exists, so that we avoid this extra looops on later stage
+# **NOTE** changed here the return status, so that it also returns in which articles the word exists, 
+# so that we avoid this extra looops on later stage
 
 def idf_of(word):
     number_of_docs_containing_word = 0
@@ -75,7 +76,8 @@ def removeStopWords(data):
 
     return dataToReturn
 
-# Needed for calculation of tf*idf in each unique word, because in calculation of idf we calculate also the texts containing this unique word, but we don't know at that point what is its tf
+# Needed for calculation of tf*idf in each unique word, because in calculation of idf we calculate also the texts containing this unique word,
+#  but we don't know at that point what is its tf
 
 def get_tf_of_word_from_article(set_tf, word, article_id):
     key = str(article_id) + ":" + word
@@ -96,7 +98,7 @@ def get_wordnet_pos(tag):
         return wordnet.ADV
 
 
-with open('texts_pos_tagged_200.json') as f:
+with open('texts_pos_tagged.json') as f:
     data = json.load(f)
 
 articles_count = len((data["articles"]))
@@ -153,7 +155,11 @@ for x in allwords_set:
     progress_per_cent = (float(iteration) / float(all_unique_words_count))*100
     print("Calculating idf progess: {:0.1f}%.\n".format(progress_per_cent))
 
+
 #print of data - as we can see each word contains all information needed to be written on xml file immediately, without other loop
 pprint(xml_dict)
-with open('vector_space_200.json', 'w') as outfile:
+with open('vector_space.json', 'w') as outfile:
     json.dump(data, outfile)
+
+with open('inverted_index.json', 'w') as outfile:
+    json.dump(xml_dict, outfile)

@@ -27,3 +27,5 @@ NLP_search_engine/pos_tags.json
 NLP_search_engine/texts_pos_tagged_all.json
 NLP_search_engine/texts_pos_tagged.json
 NLP_search_engine/vector_space.json
+NLP_search_engine/inverted_index.xml
+NLP_search_engine/inverted_index.json
