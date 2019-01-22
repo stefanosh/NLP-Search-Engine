@@ -40,7 +40,7 @@ Do everything in one command:
 cd NLP_search_engine/ && python ./database/create_DB.py && scrapy crawl hackernews && scrapy crawl technews && python morphoSyntactic_analysis.py && python vector_space_model.py
 ```
 
-Start a query! You can add as many words you wish
+Start a query! You can add as many words you wish, and limit the results by limit argument(when there is no limit, all articles containing the word are returned)
 ```
-python query_index.py day compete value 
+python query_index.py day compete value --limit 10
 ```

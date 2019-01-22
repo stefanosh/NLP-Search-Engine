@@ -22,36 +22,43 @@ def getListOfDocsWithWeightsForWords(words):
     return dicts
 
 
-
-
 # param wordsListWithArticleIds has all words included in query with corresponding ids and weights, but without the addition of weights of document_ids which have multiple words of the query inside their words.
 # getSumOfWeightsForArticlesWithSameWords returns an array which isn;t divided in each word, but with unique ids and added weight values for each id which had multiple words matched
 
 
 def getSumOfWeightsForArticlesWithSameWords(wordsListWithArticleIds):
     if(len(wordsListWithArticleIds) > 0):
-        dictc = wordsListWithArticleIds[0]["document"]
+        if(isinstance(wordsListWithArticleIds[0]["document"], list)): # this handle needed because if first word exists only in one document, wordsListWithArticleIds[0]["document"] is not a list, and then new elements cant be appended, so must be manually added in a list
+            dictc = wordsListWithArticleIds[0]["document"]
+        else:
+            dictc = [wordsListWithArticleIds[0]["document"]]
+
         for i in range(1, len(wordsListWithArticleIds)):
-            for j in wordsListWithArticleIds[i]["document"]:
-                flag = 1
-                for last in dictc:
-                    if(j["@id"] == last["@id"]):
-                        last["@weight"] += j["@weight"]
-                        flag = 0
-                        break
-                if flag:
-                    dictc.append(j)
+            # this handle needed because if a word exists only in one document, wordsListWithArticleIds[i]["document"] is not a list, so for in loop crashes
+            if(isinstance(wordsListWithArticleIds[i]["document"], list)):
+                for j in wordsListWithArticleIds[i]["document"]:
+                    flag = 1
+                    for last in dictc:
+                        if(j["@id"] == last["@id"]):
+                            last["@weight"] += j["@weight"]
+                            flag = 0
+                            break
+                    if flag:
+                        dictc.append(j)
+            # when wordsListWithArticleIds[i]["document"] is not a list and should not get in previous for j in loop
+            else:
+                dictc.append(wordsListWithArticleIds[i]["document"])
     else:
         dictc = []
     return dictc
-
 
 
 # Read one or more words from the command line
 parser = argparse.ArgumentParser(description='Quering the database')
 parser.add_argument('words', metavar='word_name', type=str, nargs='+',
                     help='The word with which you make a search request. You can add multiple words with space between.')
-
+parser.add_argument('--limit', metavar='number', type=int,
+                    help='Limit the number of articles displayed. By default all articles matched are returned')
 args = parser.parse_args()
 
 # read inverted_index and load to dictionary
@@ -69,6 +76,12 @@ finalListWithIdsAfterQuery = getSumOfWeightsForArticlesWithSameWords(
 
 if len(finalListWithIdsAfterQuery) > 0:
     finalListWithIdsAfterQuery.sort(key=lambda x: x["@weight"], reverse=True)
-    pprint(finalListWithIdsAfterQuery)
+    if(args.limit == None): #if no limit specified then display all relevant articles
+        pprint(finalListWithIdsAfterQuery)
+    else:
+        iterations = min(args.limit, len(finalListWithIdsAfterQuery))
+        for i in range(0, iterations):
+            print(finalListWithIdsAfterQuery[i])
+
 else:
     print("No article matches your search query")
