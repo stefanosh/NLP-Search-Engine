@@ -10,7 +10,7 @@ class TechnewsSpider(scrapy.Spider):
     start_urls = [
         'https://www.technewsworld.com/'
     ]
-    max_requests = 200
+    max_requests = 50
     requests_done = 0
 
     # Executed for every url specified in url - just example to begin with
@@ -47,7 +47,7 @@ class TechnewsSpider(scrapy.Spider):
                 content_text = content_text + p      
             soup = BeautifulSoup(content_text, 'html.parser')
 
-            just_text = soup.get_text().encode('ascii', 'ignore').decode('utf-8')
+            just_text = soup.get_text().encode('ascii', 'replace').decode('utf-8')
             just_text = re.sub(r'[^a-zA-Z0-9]'," ", just_text)    
            
             title = text.css('h1.title::text').extract_first()

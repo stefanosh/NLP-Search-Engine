@@ -11,7 +11,7 @@ class HackernewsSpider(scrapy.Spider):
     start_urls = [
         'https://thehackernews.com/'
     ]
-    maxRequests = 200
+    maxRequests = 50
     requestsDone = 0
 
     # Executed for every url specified in url - just example to begin with
@@ -47,11 +47,12 @@ class HackernewsSpider(scrapy.Spider):
             just_text = lxml.html.tostring(
                 root, method="text", encoding="unicode")
             
-            just_text = just_text.encode('ascii', 'ignore').decode('utf-8')
+            just_text = just_text.encode('ascii', 'replace').decode('utf-8')
             just_text = re.sub(r'[^a-zA-Z0-9]'," ", just_text)
 
             title = text.css('a::text').extract_first()
             url = text.css('a::attr(href)').extract_first()
+            
             conn = sqlite3.connect(
                 str(Path(__file__).parent.parent) + '/database/crawler_db.sqlite', timeout=10)
             cursor = conn.cursor()

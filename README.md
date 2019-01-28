@@ -23,6 +23,7 @@ Then, run to crawl the websites and store the articles in database:<br/>
 ```
 scrapy crawl hackernews
 scrapy crawl technews
+scrapy crawl reuters
 ```
 
 Then, add postags to each word in article :<br/>
@@ -37,7 +38,7 @@ python vector_space_model.py
 
 Do everything in one command:
 ```
-cd NLP_search_engine/ && python ./database/create_DB.py && scrapy crawl hackernews && scrapy crawl technews && python morphoSyntactic_analysis.py && python vector_space_model.py
+cd NLP_search_engine/ && python ./database/create_DB.py && scrapy crawl hackernews && scrapy crawl technews && scrapy crawl reuters && python morphoSyntactic_analysis.py && python vector_space_model.py
 ```
 
 Start a query! You can add as many words you wish, and limit the results by limit argument(when there is no limit, all articles containing the word are returned)
