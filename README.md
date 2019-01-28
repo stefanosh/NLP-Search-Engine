@@ -8,7 +8,8 @@ Additional Dependencies Install:
 pip install BeautifulSoup4
 pip install pathlib
 pip install nltk 
-pip install numpy 
+pip install numpy
+pip install xmljson
 ```
 
 Create DB and 'ARTICLES' table
@@ -37,4 +38,9 @@ python vector_space_model.py
 Do everything in one command:
 ```
 cd NLP_search_engine/ && python ./database/create_DB.py && scrapy crawl hackernews && scrapy crawl technews && python morphoSyntactic_analysis.py && python vector_space_model.py
+```
+
+Start a query! You can add as many words you wish, and limit the results by limit argument(when there is no limit, all articles containing the word are returned)
+```
+python query_index.py day compete value --limit 10
 ```

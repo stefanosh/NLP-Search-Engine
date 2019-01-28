@@ -1,6 +1,6 @@
 import json
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
+import utils
 import numpy as np
 from pprint import pprint
 from pathlib import Path
@@ -91,21 +91,6 @@ def get_tf_of_word_from_article(set_tf, word, article_id):
     key = str(article_id) + ":" + word
     return set_tf[key]
 
-# Return the correct pos_tag needed for lemmatizer, as it doesn;t accept all tags
-
-
-def get_wordnet_pos(tag):
-    if tag.startswith('J'):
-        return wordnet.ADJ
-    elif tag.startswith('V'):
-        return wordnet.VERB
-    elif tag.startswith('N'):
-        return wordnet.NOUN
-    elif tag.startswith('R'):
-        return wordnet.ADV
-    else:
-        return wordnet.ADV
-
 
 with open('texts_pos_tagged.json') as f:
     data = json.load(f)
@@ -126,7 +111,7 @@ for article in data["articles"]:
             # for every word in every article
         for word in article[str(text_id)]:
             word["word"] = lemmatizer.lemmatize(
-                word["word"], get_wordnet_pos(word["pos_tag"]))
+                word["word"], utils.get_wordnet_pos(word["pos_tag"]))
             allwords_set.add(word["word"])
 
 all_unique_words_count = len(allwords_set)
@@ -162,13 +147,14 @@ for x in allwords_set:
                             get_tf_of_word_from_article(set_tf, x, article_id)})
     iteration += 1
     progress_per_cent = (float(iteration) / float(all_unique_words_count))*100
-    sys.stdout.write("Calculating idf progess: %0.1f%%   \r" % (progress_per_cent) )
+    sys.stdout.write("Calculating idf progess: %0.1f%%   \r" %
+                     (progress_per_cent))
     sys.stdout.flush()
 
 # with open(str(Path(__file__).parent) + '/inverted_index.json', 'w') as outfile:
 #     json.dump(xml_dict, outfile)
 
-#creation of inverted_index xml file
+# creation of inverted_index xml file
 print("Writing to inverted_index.xml...")
 
 root = element_tree.Element("inverted_index")
