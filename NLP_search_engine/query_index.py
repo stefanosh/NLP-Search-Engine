@@ -4,7 +4,9 @@ from xml.etree.ElementTree import fromstring
 import xml.etree.ElementTree as ET
 from json import dumps, loads
 from pprint import pprint
-
+import nltk
+from nltk.stem import WordNetLemmatizer
+import utils
 # pass words and it returns all docs and weights for each word in a list
 
 
@@ -28,7 +30,8 @@ def getListOfDocsWithWeightsForWords(words):
 
 def getSumOfWeightsForArticlesWithSameWords(wordsListWithArticleIds):
     if(len(wordsListWithArticleIds) > 0):
-        if(isinstance(wordsListWithArticleIds[0]["document"], list)): # this handle needed because if first word exists only in one document, wordsListWithArticleIds[0]["document"] is not a list, and then new elements cant be appended, so must be manually added in a list
+        # this handle needed because if first word exists only in one document, wordsListWithArticleIds[0]["document"] is not a list, and then new elements cant be appended, so must be manually added in a list
+        if(isinstance(wordsListWithArticleIds[0]["document"], list)):
             dictc = wordsListWithArticleIds[0]["document"]
         else:
             dictc = [wordsListWithArticleIds[0]["document"]]
@@ -66,17 +69,34 @@ tree = ET.parse('inverted_index.xml')
 root = tree.getroot()
 xmlstr = ET.tostring(root, encoding='utf8', method='xml')
 
-# dumps converts data to json string and loads converts to json
+# dumps function converts data to json string and loads function converts to json
+# *NOTE:* most time consuming operation in 25 articles was below line and lemmatize step, rather than the query calculation afterwards
 jsonObj = loads(dumps(badgerfish.data(fromstring(xmlstr))))
 
-requestedWordsList = getListOfDocsWithWeightsForWords(args.words)
+# lowercase the search query
+for i in range(0, len(args.words)):
+    args.words[i] = args.words[i].lower()
 
+# add tags and remove stopWords
+wordsWithTagsAndStopWords = nltk.pos_tag(args.words)
+wordsWithTags = utils.removeStopWordsFromListOfWords(wordsWithTagsAndStopWords)
+
+# leammatize words and remove the tag, in order to be ready for query
+lemmatizer = WordNetLemmatizer()
+words = []
+for i in range(0, len(wordsWithTags)):
+    words.append(lemmatizer.lemmatize(
+        wordsWithTags[i][0], utils.get_wordnet_pos(wordsWithTags[i][1])))
+
+# get the articles containing the words of the query and add weights if articles contain multiple words of the query
+docsContainingRequestedWords = getListOfDocsWithWeightsForWords(words)
 finalListWithIdsAfterQuery = getSumOfWeightsForArticlesWithSameWords(
-    requestedWordsList)
+    docsContainingRequestedWords)
 
+# display results
 if len(finalListWithIdsAfterQuery) > 0:
     finalListWithIdsAfterQuery.sort(key=lambda x: x["@weight"], reverse=True)
-    if(args.limit == None): #if no limit specified then display all relevant articles
+    if(args.limit == None):  # if no limit specified then display all relevant articles
         pprint(finalListWithIdsAfterQuery)
     else:
         iterations = min(args.limit, len(finalListWithIdsAfterQuery))
