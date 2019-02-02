@@ -9,6 +9,9 @@ from nltk.stem import WordNetLemmatizer
 import utils
 import sqlite3
 from pathlib import Path
+
+import time
+start_time = time.time()
 # pass words and it returns all docs and weights for each word in a list
 
 
@@ -121,3 +124,4 @@ if len(finalListWithIdsAfterQuery) > 0:
     conn.close()
 else:
     print("No article matches your search query")
+print("--- Total time in seconds: %s---" % (time.time() - start_time))
