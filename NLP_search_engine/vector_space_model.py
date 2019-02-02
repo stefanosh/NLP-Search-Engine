@@ -151,9 +151,6 @@ for x in allwords_set:
                      (progress_per_cent))
     sys.stdout.flush()
 
-# with open(str(Path(__file__).parent) + '/inverted_index.json', 'w') as outfile:
-#     json.dump(xml_dict, outfile)
-
 # creation of inverted_index xml file
 print("Writing to inverted_index.xml...")
 

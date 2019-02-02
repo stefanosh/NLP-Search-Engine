@@ -7,6 +7,8 @@ from pprint import pprint
 import nltk
 from nltk.stem import WordNetLemmatizer
 import utils
+import sqlite3
+from pathlib import Path
 # pass words and it returns all docs and weights for each word in a list
 
 
@@ -95,13 +97,27 @@ finalListWithIdsAfterQuery = getSumOfWeightsForArticlesWithSameWords(
 
 # display results
 if len(finalListWithIdsAfterQuery) > 0:
+    conn = sqlite3.connect(str(Path(__file__).parent) +
+                           '/database/crawler_db.sqlite')
+
+    cursor = conn.cursor()
+
     finalListWithIdsAfterQuery.sort(key=lambda x: x["@weight"], reverse=True)
     if(args.limit == None):  # if no limit specified then display all relevant articles
-        pprint(finalListWithIdsAfterQuery)
+        # pprint(finalListWithIdsAfterQuery)
+        iterations = len(finalListWithIdsAfterQuery)
     else:
         iterations = min(args.limit, len(finalListWithIdsAfterQuery))
-        for i in range(0, iterations):
-            print(finalListWithIdsAfterQuery[i])
+    for i in range(0, iterations):
+        id = finalListWithIdsAfterQuery[i]["@id"]
+        cursor.execute(
+            "SELECT url,title FROM ARTICLES WHERE id=?", (str(id),))
 
+        rows = cursor.fetchall()
+        print(str(i)+". " + rows[0][1]+"\n"+rows[0][0]+"\n" +
+              "With weight: "+str(finalListWithIdsAfterQuery[i]["@weight"])+"\n")
+        # print(finalListWithIdsAfterQuery[i]["@id"])
+    conn.commit()
+    conn.close()
 else:
     print("No article matches your search query")
