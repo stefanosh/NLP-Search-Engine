@@ -117,7 +117,7 @@ if len(finalListWithIdsAfterQuery) > 0:
             "SELECT url,title FROM ARTICLES WHERE id=?", (str(id),))
 
         rows = cursor.fetchall()
-        print(str(i)+". " + rows[0][1]+"\n"+rows[0][0]+"\n" +
+        print(str(i+1)+". " + rows[0][1]+"\n"+rows[0][0]+"\n" +
               "With weight: "+str(finalListWithIdsAfterQuery[i]["@weight"])+"\n")
         # print(finalListWithIdsAfterQuery[i]["@id"])
     conn.commit()
